@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 @RestController
-@RequestMapping("v1/consessionaria")
-
+@RequestMapping("v1/carro")
 @Slf4j
 public class CarroController {
     @Autowired
@@ -19,15 +18,14 @@ public class CarroController {
 
     @PostMapping
     public void salvarCarro(@RequestBody @Valid Carro carro) {
-     //   logger.info("Carro com nome de:"+ carro.getNome());
         carro.setId(UUID.randomUUID().toString());
         repository.save(carro);
-        log.debug("Carro id = "+ carro.getId());
+        log.debug("Carro id = {} ", carro.getId());
     }
 
     @GetMapping("/{id}")
     public Carro pegarCarroSelecionado(@PathVariable  String id) {
-        System.out.println(id);
+        log.debug("Carro id = {} ", id);
         return repository.findById(id).orElseThrow(NullPointerException::new);
     }
 }
