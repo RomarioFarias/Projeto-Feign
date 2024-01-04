@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: ${APPLICATIONS_MS_NAME:@project.name@}
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://root:root@localhost:27017/discount_db?authSource=admin&authMechanism=SCRAM-SHA-1}
+      auto-index-creation: true
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+logging:
+  level:
+    root: INFO
+    com.carro.controller: DEBUG
