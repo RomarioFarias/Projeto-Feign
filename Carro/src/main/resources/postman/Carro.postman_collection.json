@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "2b0cec42-1d0c-418e-96cd-9fd2eb4cabbe",
+		"name": "Carro",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Criar Carro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nome\": \"Prisma3\",\n    \"ano\":\"2020\",\n    \"fabricante\":\"Chevrolet\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/consessionaria",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"consessionaria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pegar Carro",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/consessionaria/288882bd-bee4-4a6d-81f0-dfd406658627",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"consessionaria",
+						"288882bd-bee4-4a6d-81f0-dfd406658627"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
