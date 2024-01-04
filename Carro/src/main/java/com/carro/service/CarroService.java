@@ -1,7 +1,8 @@
 package com.carro.service;
 
-import org.springframework.stereotype.Service;
+import com.carro.entity.Carro;
 
-@Service
-public class CarroService {
+public interface CarroService {
+    Carro cadastrarCarro(Carro carro);
+    Carro pegarCarroSelecionado(String carroId);
 }

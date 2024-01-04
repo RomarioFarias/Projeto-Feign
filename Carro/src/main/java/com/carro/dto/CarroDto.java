@@ -1,22 +1,24 @@
-package com.carro.entity;
+package com.carro.dto;
+
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Setter
 @Getter
-@Document(collection = "Carro")
-public class Carro{
-    @Id
+@AllArgsConstructor
+@NoArgsConstructor
+public class CarroDto {
+
     private String id;
     @Field("nome")
     private String nome;
-    @Field("ano")
+    @NotBlank(message = "{FIELD_INVALID}")
     private String ano;
-    @Field("fabricante")
+    @NotBlank(message = "{FIELD_INVALID}")
     private String fabricante;
 }
