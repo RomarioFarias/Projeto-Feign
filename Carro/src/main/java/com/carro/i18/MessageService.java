@@ -8,7 +8,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Message {
+public class MessageService {
     private  MessageSourceAccessor accessor;
 
 //    public Message(MessageSource messageSource) {
@@ -16,7 +16,7 @@ public class Message {
 //        this.accessor = new MessageSourceAccessor(messageSource, LocaleContextHolder.getLocale());
 //    }
 
-    public Message (MessageSource messageSource) {
+    public MessageService(MessageSource messageSource) {
         ResourceBundleMessageSource resource =
                 new ResourceBundleMessageSource();
         resource.setBasename("messages");

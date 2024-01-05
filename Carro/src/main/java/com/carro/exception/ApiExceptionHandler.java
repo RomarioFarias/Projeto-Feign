@@ -1,7 +1,7 @@
 package com.carro.exception;
 
 import com.carro.enums.ExceptionCode;
-import com.carro.i18.Message;
+import com.carro.i18.MessageService;
 import com.carro.entity.Errors;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Log4j
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    private final Message message;
+    private final MessageService messageService;
 
     protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         logger.error(ex.getMessage(), ex);
@@ -36,18 +36,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return this.handleExceptionInternal(ex, null, headers, status, request);
     }
 
+    protected ResponseEntity<Object> handleException(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        logger.warn(ex.getMessage(), ex);
+        return this.handleExceptionInternal(ex, null, headers, status, request);
+    }
+
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,
             HttpStatusCode status, WebRequest request) {
 //        var message = this.message.get("RELATIONSHIP", List.of("KAKA").toArray(new String[0]));
-        String code = ExceptionCode.API_FIELDS_INVALID_4411.getCode();
+        String code = ExceptionCode.API_FIELDS_INVALID.getCode();
         List<Errors> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(expcetion ->
-                        new Errors(expcetion.getField(),  expcetion.getDefaultMessage(), String.valueOf(code)))
+                        new Errors(expcetion.getField(),  messageService.get(ExceptionCode.API_FIELDS_INVALID.name()), String.valueOf(code)))
                 .toList();
 
         logger.error(ex.getMessage(), ex);
@@ -72,7 +77,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> internalServerErrorExceptionHandler(Exception ex, WebRequest request) {
         logger.error(ex.getMessage(), ex);
         var code = ExceptionCode.INTERNAL_SERVER_ERROR.getCode();
-        return this.handleExceptionInternal(ex, message.get(code), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return this.handleExceptionInternal(ex, messageService.get(code), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
@@ -81,8 +86,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return this.handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    public ApiExceptionHandler(Message message) {
-        this.message = message;
+    public ApiExceptionHandler(MessageService messageService) {
+        this.messageService = messageService;
     }
 
 }
