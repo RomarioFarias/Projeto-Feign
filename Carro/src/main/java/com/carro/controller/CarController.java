@@ -34,8 +34,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public Car pegarCarroSelecionado(@PathVariable  String id) {
-        log.debug("Carro id = {} ", id);
-        return carService.pegarCarroSelecionado(id);
+    public Car getCarById(@PathVariable  String id) {
+        return carService.getCarById(id);
     }
 }

@@ -6,7 +6,7 @@ import com.carro.entity.EntityCar;
 import com.carro.exception.ApiExceptionHandler;
 import com.carro.i18.MessageService;
 import com.carro.mapper.JsonMapper;
-import com.carro.repository.CarroRepository;
+import com.carro.repository.CarRepository;
 import com.carro.service.CarService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @SpringBootTest
 class CarControllerTest {
 
@@ -28,7 +30,7 @@ class CarControllerTest {
     private CarService carService;
 
     @Mock
-    private CarroRepository carroRepository;
+    private CarRepository carRepository;
 
     private MockMvc mockMvc;
     @Autowired
@@ -48,7 +50,7 @@ class CarControllerTest {
         Car car = EntityCar.getCarro();
         String requestBody = JsonMapper.toString(carDto);
 
-        Mockito.when(carService.createCar(ArgumentMatchers.any(Car.class))).thenReturn(car);
+        Mockito.when(carService.createCar(any(Car.class))).thenReturn(car);
 
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,15 +64,32 @@ class CarControllerTest {
 
     @Test
     void handleYourSpecificException() throws Exception {
-        // Arrange
+
         CarDto carDto = EntityCar.getCarroDto();
-        carDto.setName(null);// Create a valid CarDto
+        carDto.setName(null);
         String requestBody = JsonMapper.toString(carDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/car")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Campo não pode ser nulo ou esta com valor incorreto"));
+    }
+
+    @Test
+    public void successfullyGetByIdCar() throws Exception {
+        var carId = EntityCar.ID;
+        var car = EntityCar.getCarro();
+        var urlCustom = URL+"/"+carId;
+
+        Mockito.when(carService.getCarById(carId)).thenReturn(car);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(urlCustom)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(car.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.manufacturer").value(car.getManufacturer()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.year").value(car.getYear()));
     }
 
 
