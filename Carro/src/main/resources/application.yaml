@@ -12,4 +12,4 @@ spring:
 logging:
   level:
     root: INFO
-    com.carro.controller: DEBUG
+    com.carro.service.impl: DEBUG
