@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 @SpringBootTest
 class CarControllerTest {
 
@@ -31,7 +32,7 @@ class CarControllerTest {
 
     private MockMvc mockMvc;
     @Autowired
-     MessageService messageService;
+    MessageService messageService;
     private static final String URL = "/v1/car";
 
 
