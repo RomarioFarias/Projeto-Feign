@@ -59,6 +59,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler({BusinessException.class})
+    public ResponseEntity<Object> businessExceptionHandler(BusinessException ex, WebRequest request) {
+        Errors error = new Errors(null, ex.getMessage(), ex.exceptionCode.toString());
+        return this.handleExceptionInternal(ex, error, new HttpHeaders(), ex.getHttpStatus(), request);
+    }
+
 //    private List<Errors> test(ErrorResponse response, BindingResult bindingResult) {
 //        List<Errors> errorsList = new ArrayList();
 //        Iterator var4 = bindingResult.getFieldErrors().iterator();

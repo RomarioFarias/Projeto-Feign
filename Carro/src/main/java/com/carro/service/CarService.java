@@ -4,5 +4,5 @@ import com.carro.entity.Car;
 
 public interface CarService {
     Car createCar(Car car);
-    Car pegarCarroSelecionado(String carroId);
+    Car getCarById(String carId);
 }

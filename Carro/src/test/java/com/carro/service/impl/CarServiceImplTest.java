@@ -1,15 +1,22 @@
 package com.carro.service.impl;
 
 import com.carro.entity.EntityCar;
-import com.carro.repository.CarroRepository;
+import com.carro.enums.ExceptionMessages;
+import com.carro.exception.ResourceNotFound;
+import com.carro.repository.CarRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CarServiceImplTest {
@@ -18,7 +25,7 @@ public class CarServiceImplTest {
     private CarServiceImpl carService;
 
     @Mock
-    private CarroRepository carroRepository;
+    private CarRepository carRepository;
 
     @BeforeEach
     void setup() {
@@ -28,9 +35,29 @@ public class CarServiceImplTest {
     @Test
     public void postCar() {
         var car = EntityCar.getCarro();
-        Mockito.when(carroRepository.save(car)).thenReturn(car);
+        when(carRepository.save(car)).thenReturn(car);
         var carResult = carService.createCar(car);
         Assertions.assertEquals(carResult.getId(), car.getId());
     }
 
+    @Test
+    public void getCarById() {
+        var carId = EntityCar.ID;
+        var car = EntityCar.getCarro();
+
+        when(carRepository.findById(carId)).thenReturn(Optional.of(car));
+
+        carService.getCarById(carId);
+        Assertions.assertEquals(car.getId(), carId);
+    }
+
+    @Test
+    public void returnResourceNotFoundCar() {
+        var carId = EntityCar.ID;
+
+        var resourceNotFound = Assert.assertThrows(ResourceNotFound.class, () -> carService.getCarById(carId));
+
+        Assertions.assertEquals(resourceNotFound.getHttpStatus(), HttpStatus.NOT_FOUND);
+        Assertions.assertEquals(resourceNotFound.getMessage(), ExceptionMessages.CAR_NOT_FOUND.getMessage().concat(carId));
+    }
 }
