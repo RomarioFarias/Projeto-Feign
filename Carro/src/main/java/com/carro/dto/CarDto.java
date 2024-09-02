@@ -2,10 +2,13 @@ package com.carro.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Setter
 @Getter
@@ -14,10 +17,15 @@ import lombok.Setter;
 public class CarDto {
 
     private String id;
-    @NotBlank(message = "{FIELD_INVALID}")
+
+    @NotBlank(message = "{API_FIELDS_INVALID}")
+    @Size(min = 1, max = 20, message = "LENGHT_NAME}")
     private String name;
-    @NotBlank(message = "{FIELD_INVALID}")
+
     private String year;
-    @NotBlank(message = "{FIELD_INVALID}")
+
+    @NotBlank(message = "{API_FIELDS_INVALID}")
+    @Size(min = 1, max = 50, message = "{LENGHT_NAME}")
     private String manufacturer;
+
 }
