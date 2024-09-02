@@ -1,8 +1,8 @@
 package com.carro.exception;
 
+import com.carro.entity.Errors;
 import com.carro.enums.ExceptionCode;
 import com.carro.i18.MessageService;
-import com.carro.entity.Errors;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -47,22 +49,34 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException ex, HttpHeaders headers,
             HttpStatusCode status, WebRequest request) {
 //        var message = this.message.get("RELATIONSHIP", List.of("KAKA").toArray(new String[0]));
-        String code = ExceptionCode.API_FIELDS_INVALID.getCode();
-        List<Errors> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(expcetion ->
-                        new Errors(expcetion.getField(),  messageService.get(ExceptionCode.API_FIELDS_INVALID.name()), String.valueOf(code)))
-                .toList();
 
+        BindingResult bindingResult = ex.getBindingResult();
+        List<FieldError> fieldError = bindingResult.getFieldErrors();
+        //ObjectError a = fieldError.get(1);
+//        List<Errors> errors = fieldError.stream()
+//                .map(ex1->
+//                        new Errors(ex1.getField(), messageService.get(ex1.getDefaultMessage()),"1333")).toList();
+        String kaka = messageService.get(("API_FIELDS_INVALID"));
+        List<Errors> errors = fieldError.stream()
+                .map(fildError ->
+                        new Errors(fildError.getField(), fildError.getDefaultMessage(), "1333")).toList();
         logger.error(ex.getMessage(), ex);
+
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({ResourceNotFound.class})
+    public ResponseEntity<Object> businessExceptionHandler(ResourceNotFound ex, WebRequest request) {
+        var message = this.messageService.get(ExceptionCode.NOT_FOUND_BY_ID.toString(), ex.exceptionCode.getParametros());
+        Errors error = new Errors(null, message, ex.exceptionCode.getCode());
+        return this.handleExceptionInternal(ex, error, new HttpHeaders(), ex.getHttpStatus(), request);
+    }
 
     @ExceptionHandler({BusinessException.class})
     public ResponseEntity<Object> businessExceptionHandler(BusinessException ex, WebRequest request) {
-        Errors error = new Errors(null, ex.getMessage(), ex.exceptionCode.toString());
+        // var message = this.message.get("RELATIONSHIP", List.of("KAKA").toArray(new String[0]));
+
+        Errors error = new Errors(null, ex.getMessage(), ex.exceptionCode.getCode());
         return this.handleExceptionInternal(ex, error, new HttpHeaders(), ex.getHttpStatus(), request);
     }
 
@@ -83,8 +97,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> internalServerErrorExceptionHandler(Exception ex, WebRequest request) {
         logger.error(ex.getMessage(), ex);
-        var code = ExceptionCode.INTERNAL_SERVER_ERROR.getCode();
-        return this.handleExceptionInternal(ex, messageService.get(code), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        Errors errors = new Errors(null, messageService.get(ExceptionCode.INTERNAL_SERVER_ERROR.name()), ExceptionCode.INTERNAL_SERVER_ERROR.getCode());
+        return this.handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})

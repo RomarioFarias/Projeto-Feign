@@ -3,6 +3,7 @@ package com.carro.service.impl;
 import com.carro.entity.EntityCar;
 import com.carro.enums.ExceptionMessages;
 import com.carro.exception.ResourceNotFound;
+import com.carro.i18.MessageService;
 import com.carro.repository.CarRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
@@ -32,6 +34,9 @@ public class CarServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+
+    @Autowired
+    MessageService messageService;
     @Test
     public void postCar() {
         var car = EntityCar.getCarro();
@@ -58,6 +63,5 @@ public class CarServiceImplTest {
         var resourceNotFound = Assert.assertThrows(ResourceNotFound.class, () -> carService.getCarById(carId));
 
         Assertions.assertEquals(resourceNotFound.getHttpStatus(), HttpStatus.NOT_FOUND);
-        Assertions.assertEquals(resourceNotFound.getMessage(), ExceptionMessages.CAR_NOT_FOUND.getMessage().concat(carId));
     }
 }
